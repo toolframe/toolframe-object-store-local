@@ -70,3 +70,5 @@ checksums and path/symlink rejection. The package requires Python 3.14 or later.
 Licensed under Apache-2.0; see [LICENSE](LICENSE).
 
 For release validation and Trusted Publisher setup, see [releasing](docs/releasing.md).
+
+For development hooks and contribution rules, see [Contributing](CONTRIBUTING.md).
