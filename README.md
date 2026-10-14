@@ -6,9 +6,8 @@ S3-compatible provider through the same `RuntimeContext.object_store()` client.
 
 ## Quick start
 
-Use the matching object-storage development builds of Toolframe Core and SDK
-0.3.0; the API has not yet received a separate published release. With Core running
-and its wheelhouse containing that SDK wheel:
+Use matching Toolframe Core and SDK 0.3.0 builds with object-storage support.
+With Core running and its wheelhouse containing that SDK wheel:
 
 ```sh
 toolframe-core --home APP plugin add ./toolframe-object-store-local --enable
