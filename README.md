@@ -6,14 +6,14 @@ S3-compatible provider through the same `RuntimeContext.object_store()` client.
 
 ## Quick start
 
-Use matching Toolframe Core and SDK 0.3.0 builds with object-storage support.
-With Core running and its wheelhouse containing that SDK wheel:
+Use Toolframe Core 0.6.1 and SDK 0.3.0. With the application running:
 
 ```sh
-toolframe-core --home APP plugin add ./toolframe-object-store-local --enable
-# Optional Dashboard example; requires streamlit-dashboard:
-toolframe-core --home APP plugin add ./toolframe-demo-image-gallery --enable
+toolframe --home APP plugin add pypi:toolframe-object-store-local==0.1.0 --enable
 ```
+
+For a local source-development example with a Dashboard page, see
+[Image Gallery](https://github.com/toolframe/toolframe-demo-image-gallery).
 
 Business plugins declare `Requirement(service="toolframe.object_store")` under
 alias `objects`. Inside an admitted handler:
@@ -68,3 +68,5 @@ Unit tests exercise persistence, isolation, pagination, failed publication,
 checksums and path/symlink rejection. The package requires Python 3.14 or later.
 
 Licensed under Apache-2.0; see [LICENSE](LICENSE).
+
+For release validation and Trusted Publisher setup, see [releasing](docs/releasing.md).
