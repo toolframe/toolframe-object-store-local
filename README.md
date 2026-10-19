@@ -6,10 +6,10 @@ S3-compatible provider through the same `RuntimeContext.object_store()` client.
 
 ## Quick start
 
-Use Toolframe Core 0.6.2 and SDK 0.3.0. With the application running:
+Use Toolframe Core 0.7.0 and SDK 0.4.0. With the application running:
 
 ```sh
-toolframe --home APP plugin add pypi:toolframe-object-store-local==0.1.0 --enable
+toolframe --home APP plugin add pypi:toolframe-object-store-local==0.2.0 --enable
 ```
 
 For a local source-development example with a Dashboard page, see
