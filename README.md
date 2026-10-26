@@ -1,77 +1,47 @@
-# Toolframe local object storage
+<p align="center">
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/readme-banner-dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="docs/assets/readme-banner-light.png">
+  <img src="docs/assets/readme-banner-light.png" alt="Toolframe Local Object Storage — Store private binary files on local disk through Toolframe’s scoped object client." width="720">
+</picture>
+</p>
 
-`object-store-local` stores private binary files for Toolframe business plugins.
-It implements `toolframe.object_store` v1, so plugins can use local disk or an
-S3-compatible provider through the same `RuntimeContext.object_store()` client.
+# Toolframe Local Object Storage
+
+[![CI on main](https://github.com/toolframe/toolframe-object-store-local/actions/workflows/ci.yml/badge.svg?branch=main&event=push)](https://github.com/toolframe/toolframe-object-store-local/actions/workflows/ci.yml?query=branch%3Amain)
+
+Store private binary files on local disk through Toolframe’s scoped object client.
+Business plugins can use the same client with a local or S3-compatible provider.
 
 ## Quick start
 
-Use Toolframe Core 0.7.0 and SDK 0.4.0. With the application running:
+In a running [Toolframe application](https://github.com/toolframe/toolframe-core#readme):
 
 ```sh
 toolframe --home APP plugin add pypi:toolframe-object-store-local==0.2.1 --enable
 ```
 
-For a local source-development example with a Dashboard page, see
-[Image Gallery](https://github.com/toolframe/toolframe-demo-image-gallery).
+Use Python 3.14+, Core 0.7+ and SDK 0.4+. Plugins declare a dependency on
+`toolframe.object_store`, then use `RuntimeContext.object_store()` to put, get,
+list and delete objects. See the [client example](docs/storage.md).
 
-Business plugins declare `Requirement(service="toolframe.object_store")` under
-alias `objects`. Inside an admitted handler:
+**Storage:** at most 64 MiB per object; completed objects survive plugin removal.
+One object-store provider is enabled per application. No public download URL is
+created, and changing providers does not move data. This backend targets modest
+collections on a local filesystem; network filesystems are unverified.
 
-```python
-objects = self.context.object_store()
-metadata = await objects.put(
-    "images/example.png", image_bytes, content_type="image/png"
-)
-image_bytes = await objects.get(metadata["key"])
-page = await objects.list(prefix="images/", limit=20)
-await objects.delete(metadata["key"])
-```
+## Guides
 
-Core provides `data/objects/object-store-local/`. Objects are partitioned by the
-application ID and owning plugin, and keys are hashed into filenames. A single
-file holds metadata and content; publication uses fsync and atomic replacement.
-No filesystem path is accepted from business callers. Symlink object files and
-namespace directories are refused. Keep the application ID stable when restoring
-a backup. Back up this directory along with the application configuration.
+| I want to… | Start here |
+| --- | --- |
+| Read, write or back up files | [Storage behavior](docs/storage.md) |
+| Use the shared client | [SDK object storage](https://github.com/toolframe/toolframe-sdk/blob/main/docs/object-storage.md) |
+| Choose an S3 backend | [S3 provider](https://github.com/toolframe/toolframe-object-store-s3) |
+| Contribute or run checks | [Contributing](CONTRIBUTING.md) · [Verification](docs/development.md) |
+| Publish a package | [Releasing](docs/releasing.md) |
 
-## Limits and behavior
+[Releases](https://github.com/toolframe/toolframe-object-store-local/releases)
 
-- At most 64 MiB per object; optional `max_object_bytes` lowers the limit.
-- Transfers use the SDK's 256 KiB chunk protocol with size and SHA-256 validation.
-- Temporary uploads expire after ten minutes and do not survive worker restart.
-- Completed objects survive reload, disable and uninstall. Delete is explicit.
-- One enabled object-store provider per application, independent of SQL storage.
-- Replacement is last-writer-wins; there is no transaction with SQL records.
-- Listings page by key, return at most 100 items, and scan local object headers.
-  This backend is intended for modest local collections, not large remote stores.
-- No public URL or file-serving route is created. Business services own access
-  checks; Dashboard renders bytes through the usual page/service bridge.
+## License
 
-Switching providers does not copy objects automatically. Plugin workers are
-trusted code, not an operating-system sandbox. The atomic file format assumes a
-local filesystem supporting `fsync` and atomic rename; network filesystems are
-not verified.
-
-## Development
-
-For sibling source checkouts, with the matching SDK changes checked out:
-
-```sh
-uv sync --group dev
-uv run pytest -q
-uv run ruff check src tests
-uv build --no-sources
-```
-
-Unit tests exercise persistence, isolation, pagination, failed publication,
-checksums and path/symlink rejection. The package requires Python 3.14 or later.
-
-Licensed under Apache-2.0; see [LICENSE](LICENSE).
-
-For release validation and Trusted Publisher setup, see [releasing](docs/releasing.md).
-
-For development hooks and contribution rules, see [Contributing](CONTRIBUTING.md).
-
-Plugin dependencies allow compatible SDK 0.x updates from the declared minimum.
-See the [SDK compatibility policy](https://github.com/toolframe/toolframe-sdk/blob/main/docs/compatibility.md) for API guarantees and minimum/latest verification.
+[Apache 2.0](LICENSE), with [NOTICE](NOTICE).
